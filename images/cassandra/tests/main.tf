@@ -197,3 +197,16 @@ resource "kubernetes_stateful_set" "cassandra" {
     service_name = kubernetes_service.cassandra.metadata[0].name
   }
 }
+
+# TODO: THIS IS STILL IN DEVELOPMENT! Once the tests are fleshed out, look at
+# leveraging imagetest. Right now I kept the shell test simple, but it is
+# throwing an error when running 'nodetool status'. You can repo this by
+# building an image (commenting out below), launch the image and try running
+# 'nodetool status'.
+#
+# It's likely missing config, as the mgmt-api image which leverages the same
+# cassandra package does NOT show this issue.
+data "oci_exec_test" "cassandra-tests" {
+  digest = var.digest
+  script = "${path.module}/run-tests.sh"
+}
